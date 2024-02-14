@@ -1,6 +1,7 @@
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Text, IconButton, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalHeader, ModalBody, ModalFooter, Button } from "@chakra-ui/react";
 import { useState } from "react";
+import { useMutation } from "../hooks/useMutation";
 
 type DeleteButtonProps = {
   onClick: () => Promise<void>;
@@ -8,7 +9,8 @@ type DeleteButtonProps = {
 
 export const DeleteButton = ({ onClick }: DeleteButtonProps) => {
   const [showModal, setShowModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
+  const [mutateDeleteTodo, { isLoading: deleteLoading }] = useMutation<void>(onClick)
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
@@ -37,14 +39,23 @@ export const DeleteButton = ({ onClick }: DeleteButtonProps) => {
                 Cancel
               </Button>
               <Button
-                isLoading={isLoading}
+                isLoading={deleteLoading}
                 colorScheme="red"
                 onClick={async () => {
-                  setIsLoading(true);
-                  onClick().then(() => {
-                    setIsLoading(false);
+                  try {
+                    await mutateDeleteTodo();
+                    console.log("Todo deleted successfully");
                     closeModal();
-                  });
+                  } catch (error) {
+                    console.error("Error deleting todo", error);
+                  }
+
+
+                  // setIsLoading(true);
+                  // onClick().then(() => {
+                  //   setIsLoading(false);
+                  //   closeModal();
+                  // });
                   // await onClick();
                   // setIsLoading(false)
                   // closeModal();

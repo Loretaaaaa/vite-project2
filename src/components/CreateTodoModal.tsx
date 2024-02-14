@@ -12,6 +12,7 @@ import {
   ModalFooter,
   Button,
 } from '@chakra-ui/react';
+import { useMutation } from '../hooks/useMutation';
 
 type CreateTodoModalProps = {
   onClose: () => void;
@@ -21,6 +22,7 @@ type CreateTodoModalProps = {
 export const CreateTodoModal = ({ onClose, onAdd }: CreateTodoModalProps) => {
   const [newTodo, setNewTodo] = useState({ title: '', description: '' });
   const [isLoading, setIsLoading] = useState(false);
+  // const [mutateCreateTodo, {isLoading, error}] = useMutation(onAdd)
 
   useEffect(() => {
     console.log('component haytvec');

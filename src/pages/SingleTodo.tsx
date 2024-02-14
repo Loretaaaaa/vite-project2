@@ -36,7 +36,7 @@ export const SingleTodo = ({ id, onUpdateTodoFinished }: SingleTodoProps) => {
   // memoize the getTodo function because we don't want to recreate it on every render
   // we only want to recreate it when the id changes (which is why we pass in id as a dependency)
   const getTodo = useCallback(() => getTodoApi(id), [id]);
-  const { data: selectedTodo } = useQuery(getTodo);
+  const { data: selectedTodo, refetch: refetchTodo } = useQuery(getTodo);
 
   const handleStatusChange = async (newStatus: string) => {
     if (selectedTodo) {
@@ -46,6 +46,7 @@ export const SingleTodo = ({ id, onUpdateTodoFinished }: SingleTodoProps) => {
           status: newStatus,
         });
 
+        await refetchTodo();
         // get all todos again
         if (onUpdateTodoFinished) {
           onUpdateTodoFinished();

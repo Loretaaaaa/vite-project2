@@ -10,7 +10,7 @@ export type Todo = {
   createdAt: number;
 };
 
-export const getTodos = () => {
+export const getTodos = (): Promise<Todo[]> => {
   console.log("getTodos");
   return new Promise<Todo[]>((resolve) => {
     setTimeout(() => {
