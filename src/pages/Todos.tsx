@@ -19,9 +19,10 @@ import {
 import { Todo, createTodo, deleteTodo, getTodos } from '../api/todos';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateTodoModal } from '../components/CreateTodoModal';
-import { SingleTodo } from '../components/SingleTodo';
+import { SingleTodo } from './SingleTodo';
 import { DeleteButton } from '../components/DeleteButton';
 import useQuery from '../hooks/useQuery';
+import { useNavigate, Link } from 'react-router-dom';
 
 export const Todos = () => {
   const { data: todos, isLoading, refetch: refetchTodos } = useQuery<Todo[]>(getTodos);
@@ -80,9 +81,10 @@ export const Todos = () => {
     //   setTodos(updatedTodos);
   };
 
+  // tarberak 1
+  const navigate = useNavigate();
   const onSelectTodo = async (todoId: string) => {
-    setSelectedTodoId(todoId);
-    localStorage.setItem('selectedTodo', JSON.stringify(todoId));
+    navigate(`/todo/${todoId}`);
   };
 
   if (isLoading) {
@@ -95,7 +97,12 @@ export const Todos = () => {
 
   return (
     <Grid templateColumns="repeat(3, 1fr)" gap={4} p={4}>
-      <GridItem colSpan={1}>
+      <GridItem
+        onClick={() => {
+          console.log('GridItem Click');
+        }}
+        colSpan={1}
+      >
         <VStack align="stretch" spacing={4} maxH="70vh" overflowY="auto">
           <Button onClick={openModal} colorScheme="blue">
             Add new
@@ -103,7 +110,11 @@ export const Todos = () => {
 
           {modalIsOpen && <CreateTodoModal onClose={closeModal} onAdd={onAdd} />}
 
-          <TableContainer>
+          <TableContainer
+            onClick={() => {
+              console.log('TableContainer Click');
+            }}
+          >
             <Table width="full" maxHeight={'70vh'} variant="stripped">
               <Thead>
                 <Tr>
@@ -120,18 +131,30 @@ export const Todos = () => {
                     bg={selectedTodoId === todo.id ? 'blue.100' : ''}
                     _hover={{ bg: 'blue.50' }}
                     cursor="pointer"
-                    onClick={() => onSelectTodo(todo.id)}
+                    onClick={() => {
+                      console.log('Tr Click');
+                      onSelectTodo(todo.id);
+                    }}
                   >
                     <Td>{todo.title}</Td>
                     <Td>{todo.description}</Td>
-                    <Td>
+                    <Td
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        console.log('Switch Click');
+                      }}>
                       <Switch
                         defaultChecked={todo.completed}
                         size={'lg'}
                         colorScheme={todo.completed ? 'blue' : 'gray'}
                       />
                     </Td>
-                    <Td>
+                    <Td
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        console.log('DeleteButton Click');
+                      }}
+                    >
                       <DeleteButton onClick={() => onDeleteTodo(todo.id)} />
                     </Td>
                   </Tr>
@@ -141,11 +164,11 @@ export const Todos = () => {
           </TableContainer>
         </VStack>
       </GridItem>
-      <GridItem colSpan={2}>
+      {/* <GridItem colSpan={2}>
         {selectedTodoId && (
           <SingleTodo onUpdateTodoFinished={refetchTodos} id={selectedTodoId} />
         )}
-      </GridItem>
+      </GridItem> */}
     </Grid>
   );
 };

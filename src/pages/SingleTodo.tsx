@@ -1,7 +1,8 @@
-import { VStack, Select, Text } from '@chakra-ui/react';
+import { VStack, Select, Text, Button } from '@chakra-ui/react';
 import useQuery from '../hooks/useQuery';
 import { getTodo as getTodoApi, updateTodo } from '../api/todos';
 import { useCallback } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 // export const SingleTodo = ({ id, onUpdateTodoFinished }: SingleTodoProps) => {
 //   const [selectedTodo, setSelectedTodo] = useState<Todo | null>();
@@ -27,16 +28,18 @@ import { useCallback } from 'react';
 //     });
 //   }, [id]);
 
-type SingleTodoProps = {
-  id: string;
-  onUpdateTodoFinished: () => void;
-};
+// type SingleTodoProps = {
+//   id: string;
+//   onUpdateTodoFinished: () => void;
+// };
 
-export const SingleTodo = ({ id, onUpdateTodoFinished }: SingleTodoProps) => {
+// export const SingleTodo = ({ id, onUpdateTodoFinished }: SingleTodoProps) => {
+export const SingleTodo = () => {
+  const { id } = useParams<{ id: string }>();
   // memoize the getTodo function because we don't want to recreate it on every render
   // we only want to recreate it when the id changes (which is why we pass in id as a dependency)
   const getTodo = useCallback(() => getTodoApi(id), [id]);
-  const { data: selectedTodo, refetch: refetchTodo } = useQuery(getTodo);
+  const { data: selectedTodo, refetch: refetchTodo, error } = useQuery(getTodo);
 
   const handleStatusChange = async (newStatus: string) => {
     if (selectedTodo) {
@@ -48,9 +51,9 @@ export const SingleTodo = ({ id, onUpdateTodoFinished }: SingleTodoProps) => {
 
         await refetchTodo();
         // get all todos again
-        if (onUpdateTodoFinished) {
-          onUpdateTodoFinished();
-        }
+        // if (onUpdateTodoFinished) {
+        //   onUpdateTodoFinished();
+        // }
       } catch (error) {
         console.error('Error updating todo:', error);
       }
@@ -59,6 +62,12 @@ export const SingleTodo = ({ id, onUpdateTodoFinished }: SingleTodoProps) => {
 
   return (
     <VStack>
+      <Link to={'/'}>
+        <Button>Go Back</Button>
+      </Link>
+
+      {error && <div> Todo Not Found</div>}
+
       {selectedTodo && (
         <>
           <Text fontSize="xl" fontWeight="bold">

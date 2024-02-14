@@ -4,6 +4,7 @@ function useQuery<Result>(fn?: () => Promise<Result>) {
   const [data, setData] = useState<Result>();
   const [isLoading, setIsLoading] = useState(false);
   const [isRefetching, setIsRefetching] = useState(false);
+  const [error, setError] = useState();
 
   const refetch = async () => {
     if (!fn) return;
@@ -28,6 +29,7 @@ function useQuery<Result>(fn?: () => Promise<Result>) {
         const data = await fn();
         setData(data);
       } catch (error) {
+        setError(error);
         console.error("Error fetching todo:", error);
       } finally {
         setIsLoading(false);
@@ -39,6 +41,7 @@ function useQuery<Result>(fn?: () => Promise<Result>) {
   return {
     data,
     refetch,
+    error,
     isLoading, // initial loading
     isRefetching, // second, third, etc. loading not to show loading indicator
   };

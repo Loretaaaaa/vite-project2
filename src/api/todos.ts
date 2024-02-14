@@ -22,10 +22,11 @@ export const getTodos = (): Promise<Todo[]> => {
 };
 
 export const getTodo = (id: string) => {
-  return new Promise<Todo | null>((resolve) => {
+  return new Promise<Todo | null>((resolve, reject) => {
     setTimeout(() => {
       const todo = loadTodosFromLocalStorage().find((t) => t.id === id);
-      resolve(todo ?? null);
+      if (todo) resolve(todo);
+      else reject(new Error("Todo not found"));
     }, 300);
   });
 };
